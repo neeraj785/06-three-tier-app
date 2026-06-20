@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "var.region"
+  region = "ap-south-2"
 }
 data "aws_availability_zones" "available" {}
 module "vpc" {
