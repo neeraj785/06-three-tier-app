@@ -16,7 +16,7 @@ module "vpc" {
 }
 
 module "eks" {
-    source = "teraform-aws-modules/eks/aws"
+    source = "terraform-aws-modules/eks/aws"
     version = "20.8.5"
 
     cluster_name = "three-tier-cluster"
@@ -29,7 +29,7 @@ module "eks" {
             min_size = 1
             max_size = 2
             desired_size = 3
-            instance_types ["t3.medium"]
+            instance_types = ["t3.medium"]
         }
     }
 }
