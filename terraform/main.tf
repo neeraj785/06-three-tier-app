@@ -1,0 +1,35 @@
+provider "aws" {
+  region = "var.region"
+}
+data "aws_availability_zones" "available" {}
+module "vpc" {
+  source = "terraform-aws-modules/vpc/aws"
+  version = "5.7.0"
+
+  name = "three-tier-vpc"
+  cidr = "10.0.0.0/16"
+  azs = data.aws_availability_zones.available.names
+  public_subnets = ["10.0.1.0/24","10.0.2.0/24"]
+  private_subnets = ["10.0.10.0/24","10.0.11.0/24"]
+  enable_nat_gateway = true
+  single_nat_gateway = true
+}
+
+module "eks" {
+    source = "teraform-aws-modules/eks/aws"
+    version = "20.8.5"
+
+    cluster_name = "three-tier-cluster"
+    cluster_version = "1.29"
+    vpc_id = module.vpc.vpc_id
+    subnet_ids = module.vpc.private_subnets
+
+    eks_managed_node_groups = {
+        nodes = {
+            min_size = 1
+            max_size = 2
+            desired_size = 3
+            instance_types ["t3.medium"]
+        }
+    }
+}
